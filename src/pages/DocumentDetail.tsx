@@ -18,6 +18,7 @@ import { excelService, Package, SubDocument } from "../services/ExcelService";
 import DocumentTable from "../components/DocumentTable";
 import ProgressChart from "../components/ProgressChart";
 import TimelineView from "../components/TimelineView";
+import SupabaseConnectionTest from "../components/SupabaseConnectionTest";
 
 const DocumentDetail: React.FC = () => {
   const { id, docId } = useParams<{ id: string; docId: string }>();
@@ -476,6 +477,11 @@ const DocumentDetail: React.FC = () => {
                   </p>
                 </div>
               )}
+            </div>
+
+            {/* Supabase Connection Status */}
+            <div className="mb-6">
+              <SupabaseConnectionTest />
             </div>
 
             {/* Enhanced Document Table */}

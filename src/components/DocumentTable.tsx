@@ -12,7 +12,9 @@ import {
   X,
 } from "lucide-react";
 import { DocumentItem } from "../services/ExcelService";
-import databaseService, { DocumentLink } from "../services/DatabaseService";
+import supabaseDatabaseService, {
+  DocumentLink,
+} from "../services/SupabaseDatabaseService";
 
 interface DocumentTableProps {
   documents: DocumentItem[];
@@ -43,7 +45,7 @@ const DocumentTable: React.FC<DocumentTableProps> = ({
   useEffect(() => {
     const loadDocumentLinks = async () => {
       try {
-        const links = await databaseService.getDocumentLinks(packageId);
+        const links = await supabaseDatabaseService.getDocumentLinks(packageId);
         const linksMap: { [key: string]: DocumentLink } = {};
         links.forEach((link) => {
           const key = `${link.packageId}-${link.documentId}`;
@@ -62,7 +64,7 @@ const DocumentTable: React.FC<DocumentTableProps> = ({
 
   const loadDocumentLinks = async () => {
     try {
-      const links = await databaseService.getDocumentLinks(packageId);
+      const links = await supabaseDatabaseService.getDocumentLinks(packageId);
       const linksMap: { [key: string]: DocumentLink } = {};
       links.forEach((link) => {
         const key = `${link.packageId}-${link.documentId}`;
@@ -96,7 +98,7 @@ const DocumentTable: React.FC<DocumentTableProps> = ({
 
     try {
       if (linkInput.trim()) {
-        await databaseService.addDocumentLink({
+        await supabaseDatabaseService.addDocumentLink({
           packageId,
           documentId: editingDocument.index.toString(),
           documentName: editingDocument.name,
@@ -107,7 +109,7 @@ const DocumentTable: React.FC<DocumentTableProps> = ({
         const linkKey = `${packageId}-${editingDocument.index}`;
         const existingLink = documentLinks[linkKey];
         if (existingLink && existingLink.id) {
-          await databaseService.deleteDocumentLink(existingLink.id);
+          await supabaseDatabaseService.deleteDocumentLink(existingLink.id);
         }
       }
 

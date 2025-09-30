@@ -10,7 +10,9 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { DocumentItem, TimeScheduleData } from "../services/ExcelService";
-import databaseService, { TimelineSchedule } from "../services/DatabaseService";
+import supabaseDatabaseService, {
+  TimelineSchedule,
+} from "../services/SupabaseDatabaseService";
 
 interface TimelineViewProps {
   documents: DocumentItem[];
@@ -105,7 +107,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
     const loadTimelineSchedules = async () => {
       try {
         // Get schedules for this specific package and sub-document combination
-        const schedules = await databaseService.getTimelineSchedules(
+        const schedules = await supabaseDatabaseService.getTimelineSchedules(
           packageId,
           subDocumentId
         );
@@ -127,7 +129,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
   const loadTimelineSchedules = async () => {
     try {
       // Get schedules for this specific package and sub-document combination
-      const schedules = await databaseService.getTimelineSchedules(
+      const schedules = await supabaseDatabaseService.getTimelineSchedules(
         packageId,
         subDocumentId
       );
@@ -145,7 +147,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
     try {
       for (const documentIndex of documentIndices) {
         const doc = documents[documentIndex];
-        await databaseService.addTimelineSchedule({
+        await supabaseDatabaseService.addTimelineSchedule({
           packageId,
           subDocumentId, // Include subDocumentId for proper separation
           documentId: `${documentIndex}`, // Use simple index as documentId
@@ -164,7 +166,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
 
   const handleDeleteSchedule = async (scheduleId: number) => {
     try {
-      await databaseService.deleteTimelineSchedule(scheduleId);
+      await supabaseDatabaseService.deleteTimelineSchedule(scheduleId);
       await loadTimelineSchedules();
     } catch (error) {
       console.error("Error deleting schedule:", error);
