@@ -71,17 +71,12 @@ const HomePage: React.FC = () => {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-8">
             <div className="flex items-center space-x-4">
-              <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl shadow-3d animate-pulse-glow">
-                <BarChart3 className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h1 className="text-4xl font-bold gradient-text text-shadow">
-                  Dashboard Monitoring
-                </h1>
-                <p className="text-blue-600/80 mt-2 text-lg">
-                  Sistem Monitoring Progress Dokumen
-                </p>
-              </div>
+              <img
+                src="/logo.png"
+                alt="Logo"
+                width={250}
+                className=" object-contain"
+              />
             </div>
             <div className="hidden md:flex items-center space-x-4">
               <div className="text-right">
@@ -405,11 +400,8 @@ const HomePage: React.FC = () => {
       <footer className="bg-white/60 backdrop-blur-md border-t border-blue-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
-            <p className="text-gray-500 text-sm mb-2">
-              © 2025 Dashboard Monitoring System. All rights reserved.
-            </p>
             <p className="text-blue-600 text-sm font-medium">
-              Kementerian Pekerjaan Umum dan Perumahan Rakyat
+              © Kementerian Pekerjaan Umum
             </p>
           </div>
         </div>
