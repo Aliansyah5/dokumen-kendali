@@ -105,7 +105,7 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ stats }) => {
       </div>
 
       {/* Pie Chart */}
-      <div className="h-64">
+      {/* <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -129,7 +129,7 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ stats }) => {
             <Tooltip content={<CustomTooltip />} />
           </PieChart>
         </ResponsiveContainer>
-      </div>
+      </div> */}
 
       {/* Legend */}
       {/* <div className="mt-6 space-y-3">

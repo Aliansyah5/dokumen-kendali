@@ -70,6 +70,17 @@ const PackageView: React.FC = () => {
     return gradients[index % gradients.length];
   };
 
+  const getIncompleteDocuments = (subDoc: any) => {
+    if (!subDoc.documents || !Array.isArray(subDoc.documents)) {
+      return [];
+    }
+
+    return subDoc.documents.filter((doc: any) => {
+      // Check if document is not completed (status is not "Selesai")
+      return doc.status !== "Selesai" && doc.status !== "selesai";
+    });
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
@@ -219,70 +230,130 @@ const PackageView: React.FC = () => {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {packageData.subDocuments.map((subDoc, index) => (
-              <div
-                key={subDoc.id}
-                onClick={() => handleSubDocumentClick(subDoc.id)}
-                className="group cursor-pointer bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl hover:scale-105 transition-all duration-300"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                {/* Icon and Header */}
-                <div className="flex items-center justify-between mb-4">
-                  <div
-                    className={`p-3 bg-gradient-to-r ${getSubDocGradient(
-                      index
-                    )} rounded-lg text-white`}
-                  >
-                    {getSubDocIcon(index)}
+            {packageData.subDocuments.map((subDoc, index) => {
+              const incompleteDocuments = getIncompleteDocuments(subDoc);
+
+              return (
+                <div
+                  key={subDoc.id}
+                  onClick={() => handleSubDocumentClick(subDoc.id)}
+                  className="group cursor-pointer bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl hover:scale-105 transition-all duration-300"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  {/* Icon and Header */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div
+                      className={`p-3 bg-gradient-to-r ${getSubDocGradient(
+                        index
+                      )} rounded-lg text-white`}
+                    >
+                      {getSubDocIcon(index)}
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors" />
                   </div>
-                  <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors" />
-                </div>
 
-                {/* Title */}
-                <h3 className="text-lg font-bold text-gray-800 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
-                  {subDoc.title}
-                </h3>
+                  {/* Title */}
+                  <h3 className="text-lg font-bold text-gray-800 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
+                    {subDoc.title}
+                  </h3>
 
-                {/* Stats */}
-                <div className="space-y-2 mb-4">
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-600">Total Dokumen:</span>
-                    <span className="font-semibold text-gray-800">
-                      {subDoc.progress.total}
+                  {/* Stats */}
+                  <div className="space-y-2 mb-4">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">Total Dokumen:</span>
+                      <span className="font-semibold text-gray-800">
+                        {subDoc.progress.total}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">Selesai:</span>
+                      <span className="font-semibold text-green-600">
+                        {subDoc.progress.completed}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">Progress:</span>
+                      <span className="font-semibold text-blue-600">
+                        {subDoc.progress.percentage}%
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+                    <div
+                      className={`bg-gradient-to-r ${getSubDocGradient(
+                        index
+                      )} h-2 rounded-full transition-all duration-300`}
+                      style={{ width: `${subDoc.progress.percentage}%` }}
+                    ></div>
+                  </div>
+
+                  {/* Incomplete Documents List */}
+                  {incompleteDocuments.length > 0 && (
+                    <div className="mb-4 p-3 bg-red-50 rounded-lg border border-red-100">
+                      <h4 className="text-sm font-semibold text-red-700 mb-2 flex items-center">
+                        <Clock className="w-4 h-4 mr-1" />
+                        Dokumen Belum Selesai ({incompleteDocuments.length}):
+                      </h4>
+                      <ul className="space-y-1 max-h-24 overflow-y-auto">
+                        {incompleteDocuments
+                          .slice(0, 5)
+                          .map((doc: any, docIndex: number) => (
+                            <li
+                              key={docIndex}
+                              className="text-xs text-red-600 flex items-start"
+                            >
+                              <span className="mr-2 text-red-400 font-bold">
+                                •
+                              </span>
+                              <span className="line-clamp-1">
+                                {doc.nama ||
+                                  doc.name ||
+                                  doc.title ||
+                                  `Dokumen ${docIndex + 1}`}
+                              </span>
+                            </li>
+                          ))}
+                        {incompleteDocuments.length > 5 && (
+                          <li className="text-xs text-red-500 italic">
+                            +{incompleteDocuments.length - 5} dokumen lainnya...
+                          </li>
+                        )}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Completed Status */}
+                  {incompleteDocuments.length === 0 &&
+                    subDoc.progress.total > 0 && (
+                      <div className="mb-4 p-3 bg-green-50 rounded-lg border border-green-100">
+                        <div className="text-sm font-semibold text-green-700 flex items-center">
+                          <svg
+                            className="w-4 h-4 mr-1"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          Semua Dokumen Selesai!
+                        </div>
+                      </div>
+                    )}
+
+                  {/* Action Button */}
+                  <div className="text-center">
+                    <span className="text-sm font-medium text-gray-600 group-hover:text-blue-600 transition-colors">
+                      Klik untuk melihat detail →
                     </span>
                   </div>
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-600">Selesai:</span>
-                    <span className="font-semibold text-green-600">
-                      {subDoc.progress.completed}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-600">Progress:</span>
-                    <span className="font-semibold text-blue-600">
-                      {subDoc.progress.percentage}%
-                    </span>
-                  </div>
                 </div>
-
-                {/* Progress Bar */}
-                <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
-                  <div
-                    className={`bg-gradient-to-r ${getSubDocGradient(
-                      index
-                    )} h-2 rounded-full transition-all duration-300`}
-                    style={{ width: `${subDoc.progress.percentage}%` }}
-                  ></div>
-                </div>
-
-                {/* Action Button */}
-                <div className="text-center">
-                  <span className="text-sm font-medium text-gray-600 group-hover:text-blue-600 transition-colors">
-                    Klik untuk melihat detail →
-                  </span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </main>

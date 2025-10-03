@@ -312,7 +312,7 @@ const DocumentDetail: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="h-80 w-full flex items-center justify-center">
+              <div className="h-30 w-full flex items-center justify-center">
                 <div className="w-full h-full relative">
                   <ProgressChart
                     stats={{
