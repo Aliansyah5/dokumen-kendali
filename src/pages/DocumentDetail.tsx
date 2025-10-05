@@ -215,10 +215,12 @@ const DocumentDetail: React.FC = () => {
                 <RefreshCw className="w-5 h-5 text-blue-600" />
               </button>
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-700">
+                <div className="text-4xl font-bold text-blue-700">
                   {subDocumentData.progress.percentage}%
                 </div>
-                <div className="text-sm text-blue-600">Progress</div>
+                <div className="text-base text-blue-600 font-medium">
+                  Progress
+                </div>
               </div>
             </div>
           </div>
@@ -490,6 +492,8 @@ const DocumentDetail: React.FC = () => {
               title=""
               showSearch={false}
               packageId={id}
+              subDocumentId={docId}
+              subDocumentTitle={subDocumentData.title}
               onLinkUpdate={loadDocumentData}
             />
           </div>

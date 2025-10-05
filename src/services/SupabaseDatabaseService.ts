@@ -2,6 +2,7 @@ import {
   supabase,
   SupabaseTimelineSchedule,
   SupabaseDocumentLink,
+  SupabaseAdditionalDocumentData,
 } from "../lib/supabase";
 
 // Interface for compatibility with existing code
@@ -22,6 +23,21 @@ export interface DocumentLink {
   documentId: string;
   documentName: string;
   linkUrl: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdditionalDocumentData {
+  id?: number;
+  packageId: string;
+  subDocumentId: string;
+  documentId: string;
+  documentName: string;
+  // Kolom untuk sub document 1 (Balai)
+  kak?: string;
+  // Kolom untuk sub document 2 (Direktorat Irigasi dan Rawa)
+  notaDinasDirIrigasiKeDitjen?: string;
+  notaDinasDitIrwaKeKI?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -77,6 +93,38 @@ class SupabaseDatabaseService {
       linkUrl: supabaseLink.link_url,
       createdAt: supabaseLink.created_at || "",
       updatedAt: supabaseLink.updated_at || "",
+    };
+  }
+
+  private toSupabaseAdditionalDocumentData(
+    data: Omit<AdditionalDocumentData, "id" | "createdAt" | "updatedAt">
+  ): Omit<SupabaseAdditionalDocumentData, "id" | "created_at" | "updated_at"> {
+    return {
+      package_id: data.packageId,
+      sub_document_id: data.subDocumentId,
+      document_id: data.documentId,
+      document_name: data.documentName,
+      kak: data.kak,
+      nota_dinas_dir_irigasi_ke_ditjen: data.notaDinasDirIrigasiKeDitjen,
+      nota_dinas_dit_irwa_ke_ki: data.notaDinasDitIrwaKeKI,
+    };
+  }
+
+  private fromSupabaseAdditionalDocumentData(
+    supabaseData: SupabaseAdditionalDocumentData
+  ): AdditionalDocumentData {
+    return {
+      id: supabaseData.id,
+      packageId: supabaseData.package_id,
+      subDocumentId: supabaseData.sub_document_id,
+      documentId: supabaseData.document_id,
+      documentName: supabaseData.document_name,
+      kak: supabaseData.kak,
+      notaDinasDirIrigasiKeDitjen:
+        supabaseData.nota_dinas_dir_irigasi_ke_ditjen,
+      notaDinasDitIrwaKeKI: supabaseData.nota_dinas_dit_irwa_ke_ki,
+      createdAt: supabaseData.created_at || "",
+      updatedAt: supabaseData.updated_at || "",
     };
   }
 
@@ -305,11 +353,162 @@ class SupabaseDatabaseService {
     }
   }
 
+  // Additional Document Data Methods
+  async addOrUpdateAdditionalDocumentData(
+    data: Omit<AdditionalDocumentData, "id" | "createdAt" | "updatedAt">
+  ): Promise<number> {
+    try {
+      const supabaseData = this.toSupabaseAdditionalDocumentData(data);
+
+      const { data: result, error } = await supabase
+        .from("additional_document_data")
+        .upsert([supabaseData], {
+          onConflict: "package_id,sub_document_id,document_id",
+        })
+        .select("id")
+        .single();
+
+      if (error) {
+        console.error("Error adding/updating additional document data:", error);
+        throw error;
+      }
+
+      console.log("✅ Additional document data saved to Supabase:", result?.id);
+      return result?.id || 0;
+    } catch (error) {
+      console.error("Error adding/updating additional document data:", error);
+      throw error;
+    }
+  }
+
+  async getAdditionalDocumentData(
+    packageId: string,
+    subDocumentId?: string
+  ): Promise<AdditionalDocumentData[]> {
+    try {
+      let query = supabase
+        .from("additional_document_data")
+        .select("*")
+        .eq("package_id", packageId)
+        .order("created_at", { ascending: false });
+
+      if (subDocumentId) {
+        query = query.eq("sub_document_id", subDocumentId);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("Error fetching additional document data:", error);
+        throw error;
+      }
+
+      const additionalData = (data || []).map((item) =>
+        this.fromSupabaseAdditionalDocumentData(item)
+      );
+
+      console.log(
+        `📊 Fetched ${additionalData.length} additional document data from Supabase for package ${packageId}`
+      );
+      return additionalData;
+    } catch (error) {
+      console.error("Error fetching additional document data:", error);
+      throw error;
+    }
+  }
+
+  async updateAdditionalDocumentDataField(
+    packageId: string,
+    subDocumentId: string,
+    documentId: string,
+    fieldName: string,
+    fieldValue: string,
+    documentName: string
+  ): Promise<void> {
+    try {
+      // First try to update existing record
+      const updateData: any = {};
+      updateData[fieldName] = fieldValue;
+
+      const { data: existingData } = await supabase
+        .from("additional_document_data")
+        .select("id")
+        .eq("package_id", packageId)
+        .eq("sub_document_id", subDocumentId)
+        .eq("document_id", documentId)
+        .single();
+
+      if (existingData) {
+        // Update existing record
+        const { error: updateError } = await supabase
+          .from("additional_document_data")
+          .update(updateData)
+          .eq("id", existingData.id);
+
+        if (updateError) {
+          console.error(
+            "Error updating additional document data field:",
+            updateError
+          );
+          throw updateError;
+        }
+      } else {
+        // Create new record
+        const newData = {
+          package_id: packageId,
+          sub_document_id: subDocumentId,
+          document_id: documentId,
+          document_name: documentName,
+          ...updateData,
+        };
+
+        const { error: insertError } = await supabase
+          .from("additional_document_data")
+          .insert([newData]);
+
+        if (insertError) {
+          console.error(
+            "Error inserting additional document data field:",
+            insertError
+          );
+          throw insertError;
+        }
+      }
+
+      console.log(
+        `✅ Additional document data field ${fieldName} updated for document ${documentId}`
+      );
+    } catch (error) {
+      console.error("Error updating additional document data field:", error);
+      throw error;
+    }
+  }
+
+  async deleteAdditionalDocumentData(id: number): Promise<void> {
+    try {
+      const { error } = await supabase
+        .from("additional_document_data")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        console.error("Error deleting additional document data:", error);
+        throw error;
+      }
+
+      console.log("🗑️ Additional document data deleted from Supabase:", id);
+    } catch (error) {
+      console.error("Error deleting additional document data:", error);
+      throw error;
+    }
+  }
+
   // Utility method to clear all data (for testing/reset)
   async clearAllData(): Promise<void> {
     try {
       await supabase.from("timeline_schedules").delete().neq("id", 0);
       await supabase.from("document_links").delete().neq("id", 0);
+      await supabase.from("additional_document_data").delete().neq("id", 0);
       console.log("🧹 All data cleared from Supabase");
     } catch (error) {
       console.error("Error clearing all data:", error);

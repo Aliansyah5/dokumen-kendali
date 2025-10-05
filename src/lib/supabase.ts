@@ -26,3 +26,18 @@ export interface SupabaseDocumentLink {
   created_at?: string;
   updated_at?: string;
 }
+
+export interface SupabaseAdditionalDocumentData {
+  id?: number;
+  package_id: string;
+  sub_document_id: string;
+  document_id: string;
+  document_name: string;
+  // Kolom untuk sub document 1 (Balai)
+  kak?: string;
+  // Kolom untuk sub document 2 (Direktorat Irigasi dan Rawa)
+  nota_dinas_dir_irigasi_ke_ditjen?: string;
+  nota_dinas_dit_irwa_ke_ki?: string;
+  created_at?: string;
+  updated_at?: string;
+}

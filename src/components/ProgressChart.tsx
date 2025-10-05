@@ -92,14 +92,14 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ stats }) => {
   return (
     <div className="w-full">
       {/* Progress Percentage */}
-      <div className="text-center mb-6">
-        <div className="text-4xl font-bold gradient-text mb-2">
+      <div className="mt-12 text-center mb-6">
+        <div className="text-8xl font-bold gradient-text mb-2">
           {stats.persentase}%
         </div>
-        <div className="text-sm text-gray-600 font-medium">
+        <div className="text-5xl text-gray-600 font-medium">
           Progress Keseluruhan
         </div>
-        <div className="text-xs text-blue-500 mt-1 font-medium">
+        <div className="text-4xl text-blue-500 mt-1 font-medium">
           {stats.selesai} dari {stats.total} dokumen selesai
         </div>
       </div>

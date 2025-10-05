@@ -11,6 +11,11 @@ export interface DocumentItem {
   linkUpload?: string;
   status?: "Selesai" | "Dalam Proses" | "Belum Dimulai";
   timelineEntries?: TimelineEntry[];
+  // Kolom tambahan untuk sub document 1 (Balai)
+  kak?: string;
+  // Kolom tambahan untuk sub document 2 (Direktorat Irigasi dan Rawa)
+  notaDinasDirIrigasiKeDitjen?: string;
+  notaDinasDitIrwaKeKI?: string;
 }
 
 export interface TimelineEntry {
