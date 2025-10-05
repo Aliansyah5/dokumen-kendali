@@ -492,8 +492,6 @@ const DocumentDetail: React.FC = () => {
               title=""
               showSearch={false}
               packageId={id}
-              subDocumentId={docId}
-              subDocumentTitle={subDocumentData.title}
               onLinkUpdate={loadDocumentData}
             />
           </div>

@@ -109,8 +109,8 @@ class ExcelService {
       console.log("D2 (Nama Paket):", this.getCellValue("D2"));
       console.log("D3 (Tahun Anggaran):", this.getCellValue("D3"));
       console.log("C9 (Package 1):", this.getCellValue("C9"));
-      console.log("C35 (Package 2):", this.getCellValue("C35"));
-      console.log("C61 (Package 3):", this.getCellValue("C61"));
+      console.log("C38 (Package 2):", this.getCellValue("C38"));
+      console.log("C67 (Package 3):", this.getCellValue("C67"));
     } catch (error) {
       console.error("Error loading Google Sheets:", error);
       throw new Error("Failed to load Google Sheets");
@@ -142,8 +142,8 @@ class ExcelService {
       console.log("D2 (Nama Paket):", this.getCellValue("D2"));
       console.log("D3 (Tahun Anggaran):", this.getCellValue("D3"));
       console.log("C9 (Package 1):", this.getCellValue("C9"));
-      console.log("C35 (Package 2):", this.getCellValue("C35"));
-      console.log("C61 (Package 3):", this.getCellValue("C61"));
+      console.log("C38 (Package 2):", this.getCellValue("C38"));
+      console.log("C67 (Package 3):", this.getCellValue("C67"));
     } catch (error) {
       console.error("Error loading Excel file:", error);
       throw new Error("Failed to load Excel file");
@@ -179,8 +179,8 @@ class ExcelService {
         "D2",
         "D3",
         "C9",
-        "C35",
-        "C61",
+        "C38",
+        "C67",
         "D9",
         "D20",
         "D28",
@@ -305,35 +305,35 @@ class ExcelService {
     if (package1Name) {
       packages.push(
         this.parsePackage("1", package1Name, [
-          { titleCell: "D9", startRow: 10, endRow: 17 }, // E10:E17
-          { titleCell: "D20", startRow: 21, endRow: 25 }, // E21:E25
-          { titleCell: "D28", startRow: 29, endRow: 30 }, // E29:E30
+          { titleCell: "D9", startRow: 10, endRow: 18 }, // E10:E18 (9 dokumen untuk Balai)
+          { titleCell: "D21", startRow: 22, endRow: 28 }, // E22:E28 (7 dokumen untuk Irigasi)
+          { titleCell: "D31", startRow: 32, endRow: 33 }, // E31:E32 (Kepatuhan Intern)
         ])
       );
     }
 
-    // Package 2: C35
-    const package2Name = this.getCellValue("C35");
-    console.log("Package 2 Name (C35):", package2Name);
+    // Package 2: C38
+    const package2Name = this.getCellValue("C38");
+    console.log("Package 2 Name (C38):", package2Name);
     if (package2Name) {
       packages.push(
         this.parsePackage("2", package2Name, [
-          { titleCell: "D35", startRow: 36, endRow: 43 }, // E36:E43
-          { titleCell: "D46", startRow: 47, endRow: 51 }, // E47:E51
-          { titleCell: "D54", startRow: 55, endRow: 56 }, // E55:E56
+          { titleCell: "D38", startRow: 39, endRow: 47 }, // E36:E44 (9 dokumen untuk Balai)
+          { titleCell: "D50", startRow: 51, endRow: 57 }, // E48:E54 (7 dokumen untuk Irigasi)
+          { titleCell: "D60", startRow: 61, endRow: 62 }, // E57:E58 (Kepatuhan Intern)
         ])
       );
     }
 
     // Package 3: C61
-    const package3Name = this.getCellValue("C61");
-    console.log("Package 3 Name (C61):", package3Name);
+    const package3Name = this.getCellValue("C67");
+    console.log("Package 3 Name (C67):", package3Name);
     if (package3Name) {
       packages.push(
         this.parsePackage("3", package3Name, [
-          { titleCell: "D61", startRow: 62, endRow: 69 }, // E62:E69
-          { titleCell: "D72", startRow: 73, endRow: 77 }, // E73:E77
-          { titleCell: "D80", startRow: 81, endRow: 82 }, // E81:E82
+          { titleCell: "D67", startRow: 68, endRow: 76 }, // E62:E70 (9 dokumen untuk Balai)
+          { titleCell: "D79", startRow: 80, endRow: 86 }, // E74:E80 (7 dokumen untuk Irigasi)
+          { titleCell: "D89", startRow: 90, endRow: 91 }, // E83:E84 (Kepatuhan Intern)
         ])
       );
     }
@@ -460,17 +460,17 @@ class ExcelService {
         "1-1": {
           // Sub dokumen Balai
           name: "Balai",
-          rows: [10, 11, 12, 13, 14, 15, 16, 17], // L10-CQ10, L11-CQ11, L12-CQ12, L13-CQ13, L14-CQ14, L15-CQ15, L16-CQ16, L17-CQ17
+          rows: [10, 11, 12, 13, 14, 15, 16, 17, 18], // L10-CQ10 sampai L18-CQ18 (9 dokumen)
         },
         "1-2": {
           // Sub dokumen Direktorat Irigasi dan Rawa (Subdit Wil. IV)
           name: "Direktorat Irigasi dan Rawa (Subdit Wil. IV)",
-          rows: [21, 22, 23, 24, 25], // L21-CQ21, L22-CQ22, L23-CQ23, L24-CQ24, L25-CQ25
+          rows: [22, 23, 24, 25, 26, 27, 28], // L22-CQ22 sampai L28-CQ28 (7 dokumen)
         },
         "1-3": {
-          // Sub dokumen Direktorat Kepatuhan Intern
-          name: "Direktorat Kepatuhan Intern",
-          rows: [29, 30], // L29-CQ29, L30-CQ30
+          // Sub dokumen Kepatuhan Intern
+          name: "Kepatuhan Intern",
+          rows: [31, 32], // L31-CQ31, L32-CQ32
         },
       },
       // Paket 2
@@ -478,17 +478,17 @@ class ExcelService {
         "2-1": {
           // Sub dokumen Balai
           name: "Balai",
-          rows: [36, 37, 38, 39, 40, 41, 42, 43], // L36-CQ36, L37-CQ37, etc.
+          rows: [36, 37, 38, 39, 40, 41, 42, 43, 44], // L36-CQ36 sampai L44-CQ44 (9 dokumen)
         },
         "2-2": {
           // Sub dokumen Direktorat Irigasi dan Rawa (Subdit Wil. IV)
           name: "Direktorat Irigasi dan Rawa (Subdit Wil. IV)",
-          rows: [47, 48, 49, 50, 51], // L47-CQ47, L48-CQ48, etc.
+          rows: [48, 49, 50, 51, 52, 53, 54], // L48-CQ48 sampai L54-CQ54 (7 dokumen)
         },
         "2-3": {
-          // Sub dokumen Direktorat Kepatuhan Intern
-          name: "Direktorat Kepatuhan Intern",
-          rows: [55, 56], // L55-CQ55, L56-CQ56
+          // Sub dokumen Kepatuhan Intern
+          name: "Kepatuhan Intern",
+          rows: [57, 58], // L57-CQ57, L58-CQ58
         },
       },
       // Paket 3
@@ -496,17 +496,17 @@ class ExcelService {
         "3-1": {
           // Sub dokumen Balai
           name: "Balai",
-          rows: [62, 63, 64, 65, 66, 67, 68, 69], // L62-CQ62, L63-CQ63, etc.
+          rows: [62, 63, 64, 65, 66, 67, 68, 69, 70], // L62-CQ62 sampai L70-CQ70 (9 dokumen)
         },
         "3-2": {
           // Sub dokumen Direktorat Irigasi dan Rawa (Subdit Wil. IV)
           name: "Direktorat Irigasi dan Rawa (Subdit Wil. IV)",
-          rows: [72, 73, 74, 75, 76], // L72-CQ72, L73-CQ73, etc.
+          rows: [74, 75, 76, 77, 78, 79, 80], // L74-CQ74 sampai L80-CQ80 (7 dokumen)
         },
         "3-3": {
-          // Sub dokumen Direktorat Kepatuhan Intern
-          name: "Direktorat Kepatuhan Intern",
-          rows: [81, 82], // L81-CQ81, L82-CQ82
+          // Sub dokumen Kepatuhan Intern
+          name: "Kepatuhan Intern",
+          rows: [83, 84], // L83-CQ83, L84-CQ84
         },
       },
     };
@@ -545,9 +545,9 @@ class ExcelService {
     // Debug: Test specific example - Paket 1 sesuai spesifikasi
     console.log("=== DEBUG: Testing Paket 1 sesuai spesifikasi lengkap ===");
 
-    // Sub dokumen Balai (Dokumen 1-8: L10-CQ10 sampai L17-CQ17)
+    // Sub dokumen Balai (Dokumen 1-9: L10-CQ10 sampai L18-CQ18)
     console.log("\n--- Sub dokumen Balai ---");
-    for (let docRow = 10; docRow <= 17; docRow++) {
+    for (let docRow = 10; docRow <= 18; docRow++) {
       const docName = this.getCellValue(
         XLSX.utils.encode_cell({ r: docRow - 1, c: 4 })
       ); // E column
@@ -576,15 +576,15 @@ class ExcelService {
       );
     }
 
-    // Sub dokumen Direktorat Irigasi dan Rawa (Dokumen 1-5: L21-CQ21 sampai L25-CQ25)
+    // Sub dokumen Direktorat Irigasi dan Rawa (Dokumen 1-7: L22-CQ22 sampai L28-CQ28)
     console.log(
       "\n--- Sub dokumen Direktorat Irigasi dan Rawa (Subdit Wil. IV) ---"
     );
-    for (let docRow = 21; docRow <= 25; docRow++) {
+    for (let docRow = 22; docRow <= 28; docRow++) {
       const docName = this.getCellValue(
         XLSX.utils.encode_cell({ r: docRow - 1, c: 4 })
       ); // E column
-      console.log(`Dokumen ${docRow - 20} (Row ${docRow}): "${docName}"`);
+      console.log(`Dokumen ${docRow - 21} (Row ${docRow}): "${docName}"`);
 
       let foundVCount = 0;
       for (let col = 11; col <= 94; col++) {
@@ -604,17 +604,17 @@ class ExcelService {
         }
       }
       console.log(
-        `    Total V marks found for dokumen ${docRow - 20}: ${foundVCount}`
+        `    Total V marks found for dokumen ${docRow - 21}: ${foundVCount}`
       );
     }
 
-    // Sub dokumen Direktorat Kepatuhan Intern (Dokumen 1-2: L29-CQ29 sampai L30-CQ30)
-    console.log("\n--- Sub dokumen Direktorat Kepatuhan Intern ---");
-    for (let docRow = 29; docRow <= 30; docRow++) {
+    // Sub dokumen Kepatuhan Intern (Dokumen 1-2: L31-CQ31 sampai L32-CQ32)
+    console.log("\n--- Sub dokumen Kepatuhan Intern ---");
+    for (let docRow = 31; docRow <= 32; docRow++) {
       const docName = this.getCellValue(
         XLSX.utils.encode_cell({ r: docRow - 1, c: 4 })
       ); // E column
-      console.log(`Dokumen ${docRow - 28} (Row ${docRow}): "${docName}"`);
+      console.log(`Dokumen ${docRow - 30} (Row ${docRow}): "${docName}"`);
 
       let foundVCount = 0;
       for (let col = 11; col <= 94; col++) {
@@ -634,7 +634,7 @@ class ExcelService {
         }
       }
       console.log(
-        `    Total V marks found for dokumen ${docRow - 28}: ${foundVCount}`
+        `    Total V marks found for dokumen ${docRow - 30}: ${foundVCount}`
       );
     }
 
@@ -747,17 +747,17 @@ class ExcelService {
     let baseRow = 0;
 
     if (packageId === "1") {
-      if (subDocId === "1-1") baseRow = 10; // E10:E17
-      else if (subDocId === "1-2") baseRow = 21; // E21:E25
-      else if (subDocId === "1-3") baseRow = 29; // E29:E30
+      if (subDocId === "1-1") baseRow = 10; // E10:E18
+      else if (subDocId === "1-2") baseRow = 22; // E22:E28
+      else if (subDocId === "1-3") baseRow = 31; // E31:E32
     } else if (packageId === "2") {
-      if (subDocId === "2-1") baseRow = 36; // E36:E43
-      else if (subDocId === "2-2") baseRow = 47; // E47:E51
-      else if (subDocId === "2-3") baseRow = 55; // E55:E56
+      if (subDocId === "2-1") baseRow = 36; // E36:E44
+      else if (subDocId === "2-2") baseRow = 48; // E48:E54
+      else if (subDocId === "2-3") baseRow = 57; // E57:E58
     } else if (packageId === "3") {
-      if (subDocId === "3-1") baseRow = 62; // E62:E69
-      else if (subDocId === "3-2") baseRow = 73; // E73:E77
-      else if (subDocId === "3-3") baseRow = 81; // E81:E82
+      if (subDocId === "3-1") baseRow = 62; // E62:E70
+      else if (subDocId === "3-2") baseRow = 74; // E74:E80
+      else if (subDocId === "3-3") baseRow = 83; // E83:E84
     }
 
     return baseRow ? baseRow + docIndex : null;
@@ -983,46 +983,46 @@ class ExcelService {
     let subDocumentId = "1-1";
     let documentIndex = 0;
 
-    // Package 1: rows 9-30
-    if (row >= 9 && row <= 30) {
+    // Package 1: rows 10-32
+    if (row >= 10 && row <= 32) {
       packageId = "1";
-      if (row >= 9 && row <= 17) {
+      if (row >= 10 && row <= 18) {
         subDocumentId = "1-1";
-        documentIndex = row - 9; // 0-based index within subdocument
-      } else if (row >= 20 && row <= 25) {
+        documentIndex = row - 10; // 0-based index within subdocument
+      } else if (row >= 22 && row <= 28) {
         subDocumentId = "1-2";
-        documentIndex = row - 20;
-      } else if (row >= 28 && row <= 30) {
+        documentIndex = row - 22;
+      } else if (row >= 31 && row <= 32) {
         subDocumentId = "1-3";
-        documentIndex = row - 28;
+        documentIndex = row - 31;
       }
     }
-    // Package 2: rows 35-56
-    else if (row >= 35 && row <= 56) {
+    // Package 2: rows 36-58
+    else if (row >= 36 && row <= 58) {
       packageId = "2";
-      if (row >= 35 && row <= 43) {
+      if (row >= 36 && row <= 44) {
         subDocumentId = "2-1";
-        documentIndex = row - 35;
-      } else if (row >= 46 && row <= 51) {
+        documentIndex = row - 36;
+      } else if (row >= 48 && row <= 54) {
         subDocumentId = "2-2";
-        documentIndex = row - 46;
-      } else if (row >= 54 && row <= 56) {
+        documentIndex = row - 48;
+      } else if (row >= 57 && row <= 58) {
         subDocumentId = "2-3";
-        documentIndex = row - 54;
+        documentIndex = row - 57;
       }
     }
-    // Package 3: rows 61-82
-    else if (row >= 61 && row <= 82) {
+    // Package 3: rows 62-84
+    else if (row >= 62 && row <= 84) {
       packageId = "3";
-      if (row >= 61 && row <= 69) {
+      if (row >= 62 && row <= 70) {
         subDocumentId = "3-1";
-        documentIndex = row - 61;
-      } else if (row >= 72 && row <= 77) {
+        documentIndex = row - 62;
+      } else if (row >= 74 && row <= 80) {
         subDocumentId = "3-2";
-        documentIndex = row - 72;
-      } else if (row >= 80 && row <= 82) {
+        documentIndex = row - 74;
+      } else if (row >= 83 && row <= 84) {
         subDocumentId = "3-3";
-        documentIndex = row - 80;
+        documentIndex = row - 83;
       }
     }
 
@@ -1030,23 +1030,23 @@ class ExcelService {
   }
 
   private determinePackageFromRow(row: number): string {
-    if (row >= 9 && row <= 30) return "1";
-    if (row >= 35 && row <= 56) return "2";
-    if (row >= 61 && row <= 82) return "3";
+    if (row >= 10 && row <= 32) return "1";
+    if (row >= 36 && row <= 58) return "2";
+    if (row >= 62 && row <= 84) return "3";
     return "1";
   }
 
   private determineSubDocumentFromRow(row: number): string {
     // This is a simplified logic - you might need to make it more sophisticated
-    if (row >= 9 && row <= 17) return "1-1";
-    if (row >= 20 && row <= 25) return "1-2";
-    if (row >= 28 && row <= 30) return "1-3";
-    if (row >= 35 && row <= 43) return "2-1";
-    if (row >= 46 && row <= 51) return "2-2";
-    if (row >= 54 && row <= 56) return "2-3";
-    if (row >= 61 && row <= 69) return "3-1";
-    if (row >= 72 && row <= 77) return "3-2";
-    if (row >= 80 && row <= 82) return "3-3";
+    if (row >= 10 && row <= 18) return "1-1";
+    if (row >= 22 && row <= 28) return "1-2";
+    if (row >= 31 && row <= 32) return "1-3";
+    if (row >= 36 && row <= 44) return "2-1";
+    if (row >= 48 && row <= 54) return "2-2";
+    if (row >= 57 && row <= 58) return "2-3";
+    if (row >= 62 && row <= 70) return "3-1";
+    if (row >= 74 && row <= 80) return "3-2";
+    if (row >= 83 && row <= 84) return "3-3";
     return "1-1";
   }
 

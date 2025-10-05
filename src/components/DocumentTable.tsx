@@ -14,7 +14,6 @@ import {
 import { DocumentItem } from "../services/ExcelService";
 import supabaseDatabaseService, {
   DocumentLink,
-  AdditionalDocumentData,
 } from "../services/SupabaseDatabaseService";
 
 interface DocumentTableProps {
@@ -22,8 +21,6 @@ interface DocumentTableProps {
   title?: string;
   showSearch?: boolean;
   packageId?: string;
-  subDocumentId?: string;
-  subDocumentTitle?: string;
   onLinkUpdate?: () => void;
 }
 
@@ -32,30 +29,17 @@ const DocumentTable: React.FC<DocumentTableProps> = ({
   title = "Daftar Dokumen",
   showSearch = true,
   packageId = "",
-  subDocumentId = "",
-  subDocumentTitle = "",
   onLinkUpdate,
 }) => {
   const [documentLinks, setDocumentLinks] = useState<{
     [key: string]: DocumentLink;
   }>({});
-  const [additionalData, setAdditionalData] = useState<{
-    [key: string]: AdditionalDocumentData;
-  }>({});
   const [showLinkModal, setShowLinkModal] = useState(false);
-  const [showAdditionalModal, setShowAdditionalModal] = useState(false);
   const [editingDocument, setEditingDocument] = useState<{
     index: number;
     name: string;
   } | null>(null);
-  const [editingAdditionalField, setEditingAdditionalField] = useState<{
-    index: number;
-    name: string;
-    fieldName: string;
-    currentValue: string;
-  } | null>(null);
   const [linkInput, setLinkInput] = useState<string>("");
-  const [additionalInput, setAdditionalInput] = useState<string>("");
 
   // Load document links on component mount
   useEffect(() => {
@@ -73,32 +57,10 @@ const DocumentTable: React.FC<DocumentTableProps> = ({
       }
     };
 
-    const loadAdditionalData = async () => {
-      try {
-        if (packageId && subDocumentId) {
-          const additionalDataList =
-            await supabaseDatabaseService.getAdditionalDocumentData(
-              packageId,
-              subDocumentId
-            );
-          const additionalDataMap: { [key: string]: AdditionalDocumentData } =
-            {};
-          additionalDataList.forEach((data) => {
-            const key = `${data.packageId}-${data.subDocumentId}-${data.documentId}`;
-            additionalDataMap[key] = data;
-          });
-          setAdditionalData(additionalDataMap);
-        }
-      } catch (error) {
-        console.error("Error loading additional document data:", error);
-      }
-    };
-
     if (packageId) {
       loadDocumentLinks();
-      loadAdditionalData();
     }
-  }, [packageId, subDocumentId]);
+  }, [packageId]);
 
   const loadDocumentLinks = async () => {
     try {
@@ -166,148 +128,6 @@ const DocumentTable: React.FC<DocumentTableProps> = ({
   const getDocumentLink = (documentIndex: number): string => {
     const linkKey = `${packageId}-${documentIndex}`;
     return documentLinks[linkKey]?.linkUrl || "";
-  };
-
-  const getAdditionalDataValue = (
-    documentIndex: number,
-    fieldName: string
-  ): string => {
-    const dataKey = `${packageId}-${subDocumentId}-${documentIndex}`;
-    const data = additionalData[dataKey];
-    if (!data) return "";
-
-    switch (fieldName) {
-      case "kak":
-        return data.kak || "";
-      case "notaDinasDirIrigasiKeDitjen":
-        return data.notaDinasDirIrigasiKeDitjen || "";
-      case "notaDinasDitIrwaKeKI":
-        return data.notaDinasDitIrwaKeKI || "";
-      default:
-        return "";
-    }
-  };
-
-  const handleEditAdditionalField = (
-    documentIndex: number,
-    documentName: string,
-    fieldName: string
-  ) => {
-    const currentValue = getAdditionalDataValue(documentIndex, fieldName);
-    setEditingAdditionalField({
-      index: documentIndex,
-      name: documentName,
-      fieldName,
-      currentValue,
-    });
-    setAdditionalInput(currentValue);
-    setShowAdditionalModal(true);
-  };
-
-  const handleSaveAdditionalField = async () => {
-    if (!editingAdditionalField) return;
-
-    try {
-      const fieldMapping: { [key: string]: string } = {
-        kak: "kak",
-        notaDinasDirIrigasiKeDitjen: "nota_dinas_dir_irigasi_ke_ditjen",
-        notaDinasDitIrwaKeKI: "nota_dinas_dit_irwa_ke_ki",
-      };
-
-      const dbFieldName = fieldMapping[editingAdditionalField.fieldName];
-
-      await supabaseDatabaseService.updateAdditionalDocumentDataField(
-        packageId,
-        subDocumentId,
-        editingAdditionalField.index.toString(),
-        dbFieldName,
-        additionalInput.trim(),
-        editingAdditionalField.name
-      );
-
-      // Reload additional data
-      const additionalDataList =
-        await supabaseDatabaseService.getAdditionalDocumentData(
-          packageId,
-          subDocumentId
-        );
-      const additionalDataMap: { [key: string]: AdditionalDocumentData } = {};
-      additionalDataList.forEach((data) => {
-        const key = `${data.packageId}-${data.subDocumentId}-${data.documentId}`;
-        additionalDataMap[key] = data;
-      });
-      setAdditionalData(additionalDataMap);
-
-      setShowAdditionalModal(false);
-      setEditingAdditionalField(null);
-      setAdditionalInput("");
-
-      if (onLinkUpdate) {
-        onLinkUpdate();
-      }
-    } catch (error) {
-      console.error("Error saving additional field:", error);
-    }
-  };
-
-  const handleCancelAdditionalEdit = () => {
-    setShowAdditionalModal(false);
-    setEditingAdditionalField(null);
-    setAdditionalInput("");
-  };
-
-  const renderAdditionalField = (
-    value: string,
-    documentIndex: number,
-    documentName: string,
-    fieldName: string,
-    fieldLabel: string
-  ) => {
-    if (!value) {
-      return (
-        <div className="flex items-center space-x-2">
-          <span className="text-gray-400 text-xs italic">No {fieldLabel}</span>
-          <button
-            onClick={() =>
-              handleEditAdditionalField(documentIndex, documentName, fieldName)
-            }
-            className="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
-            title={`Add ${fieldLabel}`}
-          >
-            <Edit2 className="w-4 h-4" />
-          </button>
-        </div>
-      );
-    }
-
-    return (
-      <div className="flex items-center space-x-2">
-        <span className="text-gray-600 text-xs bg-gray-50 px-2 py-1 rounded border font-mono max-w-xs truncate">
-          {value.length > 30 ? `${value.substring(0, 30)}...` : value}
-        </span>
-        <button
-          onClick={() =>
-            handleEditAdditionalField(documentIndex, documentName, fieldName)
-          }
-          className="p-1 text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded transition-colors"
-          title={`Edit ${fieldLabel}`}
-        >
-          <Edit2 className="w-3 h-3" />
-        </button>
-      </div>
-    );
-  };
-
-  // Helper function to determine which additional columns to show based on sub document
-  const shouldShowKAKColumn = () => {
-    return subDocumentTitle?.toLowerCase().includes("balai");
-  };
-
-  const shouldShowDirIrigasiColumns = () => {
-    return (
-      subDocumentTitle?.toLowerCase().includes("direktorat irigasi") ||
-      subDocumentTitle?.toLowerCase().includes("irigasi dan rawa")
-    );
   };
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -586,21 +406,6 @@ const DocumentTable: React.FC<DocumentTableProps> = ({
               <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                 Keterangan
               </th>
-              {shouldShowKAKColumn() && (
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                  KAK
-                </th>
-              )}
-              {shouldShowDirIrigasiColumns() && (
-                <>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                    Nota Dinas Dir. Irigasi ke Ditjen SDA
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                    Nota Dinas Dit. Irwa ke KI
-                  </th>
-                </>
-              )}
               <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                 Link
               </th>
@@ -686,46 +491,6 @@ const DocumentTable: React.FC<DocumentTableProps> = ({
                     {doc.keterangan || "-"}
                   </span>
                 </td>
-
-                {/* KAK - only for Balai sub documents */}
-                {shouldShowKAKColumn() && (
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    {renderAdditionalField(
-                      getAdditionalDataValue(index, "kak"),
-                      index,
-                      doc.nama || `Document ${index + 1}`,
-                      "kak",
-                      "KAK"
-                    )}
-                  </td>
-                )}
-
-                {/* Nota Dinas columns - only for Direktorat Irigasi sub documents */}
-                {shouldShowDirIrigasiColumns() && (
-                  <>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      {renderAdditionalField(
-                        getAdditionalDataValue(
-                          index,
-                          "notaDinasDirIrigasiKeDitjen"
-                        ),
-                        index,
-                        doc.nama || `Document ${index + 1}`,
-                        "notaDinasDirIrigasiKeDitjen",
-                        "Nota Dinas Dir. Irigasi"
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      {renderAdditionalField(
-                        getAdditionalDataValue(index, "notaDinasDitIrwaKeKI"),
-                        index,
-                        doc.nama || `Document ${index + 1}`,
-                        "notaDinasDitIrwaKeKI",
-                        "Nota Dinas Dit. Irwa"
-                      )}
-                    </td>
-                  </>
-                )}
 
                 {/* Link */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -842,83 +607,6 @@ const DocumentTable: React.FC<DocumentTableProps> = ({
               >
                 <Save className="w-4 h-4 mr-2" />
                 Simpan Link
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Additional Field Edit Modal */}
-      {showAdditionalModal && editingAdditionalField && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full m-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-gray-800">
-                Edit{" "}
-                {editingAdditionalField.fieldName === "kak"
-                  ? "KAK"
-                  : editingAdditionalField.fieldName ===
-                    "notaDinasDirIrigasiKeDitjen"
-                  ? "Nota Dinas Dir. Irigasi"
-                  : "Nota Dinas Dit. Irwa"}
-              </h3>
-              <button
-                onClick={handleCancelAdditionalEdit}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5 text-gray-600" />
-              </button>
-            </div>
-
-            <div className="mb-4">
-              <p className="text-sm text-gray-600 mb-2">Dokumen:</p>
-              <p className="font-semibold text-gray-800">
-                {editingAdditionalField.name}
-              </p>
-            </div>
-
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {editingAdditionalField.fieldName === "kak"
-                  ? "KAK"
-                  : editingAdditionalField.fieldName ===
-                    "notaDinasDirIrigasiKeDitjen"
-                  ? "Nota Dinas Direktur Irigasi dan Rawa Ke Ditjen SDA"
-                  : "Nota Dinas Dit. Irwa ke KI"}
-              </label>
-              <input
-                type="text"
-                value={additionalInput}
-                onChange={(e) => setAdditionalInput(e.target.value)}
-                placeholder="Masukkan nilai untuk field ini"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                autoFocus
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    handleSaveAdditionalField();
-                  } else if (e.key === "Escape") {
-                    handleCancelAdditionalEdit();
-                  }
-                }}
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                Masukkan informasi untuk field tambahan ini
-              </p>
-            </div>
-
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={handleCancelAdditionalEdit}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
-              >
-                Batal
-              </button>
-              <button
-                onClick={handleSaveAdditionalField}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center"
-              >
-                <Save className="w-4 h-4 mr-2" />
-                Simpan
               </button>
             </div>
           </div>
