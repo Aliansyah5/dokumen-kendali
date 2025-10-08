@@ -395,13 +395,13 @@ const DocumentTable: React.FC<DocumentTableProps> = ({
                 Checklist
               </th>
               <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                Tanggal Terima
+                Tanggal Upload
               </th>
               <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                Tanggal Selesai
+                Tanggal Surat
               </th>
               <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                Tindak Lanjut
+                Waktu Penyelesaian
               </th>
               <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                 Keterangan
