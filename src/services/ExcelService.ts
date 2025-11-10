@@ -306,34 +306,34 @@ class ExcelService {
       packages.push(
         this.parsePackage("1", package1Name, [
           { titleCell: "D9", startRow: 10, endRow: 18 }, // E10:E18 (9 dokumen untuk Balai)
-          { titleCell: "D21", startRow: 22, endRow: 28 }, // E22:E28 (7 dokumen untuk Irigasi)
-          { titleCell: "D31", startRow: 32, endRow: 33 }, // E31:E32 (Kepatuhan Intern)
+          { titleCell: "D21", startRow: 22, endRow: 32 }, // E22:E28 (7 dokumen untuk Irigasi)
+          { titleCell: "D35", startRow: 36, endRow: 38 }, // E31:E32 (Kepatuhan Intern)
         ])
       );
     }
 
-    // Package 2: C38
-    const package2Name = this.getCellValue("C38");
-    console.log("Package 2 Name (C38):", package2Name);
+    // Package 2: C43
+    const package2Name = this.getCellValue("C43");
+    console.log("Package 2 Name (C43):", package2Name);
     if (package2Name) {
       packages.push(
         this.parsePackage("2", package2Name, [
-          { titleCell: "D38", startRow: 39, endRow: 47 }, // E36:E44 (9 dokumen untuk Balai)
-          { titleCell: "D50", startRow: 51, endRow: 57 }, // E48:E54 (7 dokumen untuk Irigasi)
-          { titleCell: "D60", startRow: 61, endRow: 62 }, // E57:E58 (Kepatuhan Intern)
+          { titleCell: "D43", startRow: 44, endRow: 52 }, // E36:E44 (9 dokumen untuk Balai)
+          { titleCell: "D55", startRow: 56, endRow: 66 }, // E48:E54 (7 dokumen untuk Irigasi)
+          { titleCell: "D69", startRow: 70, endRow: 72 }, // E57:E58 (Kepatuhan Intern)
         ])
       );
     }
 
     // Package 3: C61
-    const package3Name = this.getCellValue("C67");
-    console.log("Package 3 Name (C67):", package3Name);
+    const package3Name = this.getCellValue("C77");
+    console.log("Package 3 Name (C77):", package3Name);
     if (package3Name) {
       packages.push(
         this.parsePackage("3", package3Name, [
-          { titleCell: "D67", startRow: 68, endRow: 76 }, // E62:E70 (9 dokumen untuk Balai)
-          { titleCell: "D79", startRow: 80, endRow: 86 }, // E74:E80 (7 dokumen untuk Irigasi)
-          { titleCell: "D89", startRow: 90, endRow: 91 }, // E83:E84 (Kepatuhan Intern)
+          { titleCell: "D77", startRow: 78, endRow: 86 }, // E62:E70 (9 dokumen untuk Balai)
+          { titleCell: "D89", startRow: 90, endRow: 100 }, // E74:E80 (7 dokumen untuk Irigasi)
+          { titleCell: "D103", startRow: 104, endRow: 106 }, // E83:E84 (Kepatuhan Intern)
         ])
       );
     }
