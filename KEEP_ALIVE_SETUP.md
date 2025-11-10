@@ -54,58 +54,37 @@ Expected response:
 
 ## 🌐 Cron Job Options
 
-### Option 1: Vercel Cron (Easiest)
-
-Add to `vercel.json`:
-
-```json
-{
-  "crons": [
-    {
-      "path": "/api/keep-alive",
-      "schedule": "*/5 * * * *"
-    }
-  ]
-}
-```
-
-Redeploy:
-
-```bash
-vercel --prod
-```
-
-**Done!** Vercel will ping every 5 minutes automatically.
+**⚠️ Penting**: Vercel Cron memerlukan paket berbayar. Gunakan layanan cron gratis eksternal di bawah ini.
 
 ---
 
-### Option 2: cron-job.org (Free)
+### Option 1: cron-job.org (Gratis & Direkomendasikan)
 
 1. **Go to**: https://cron-job.org
 2. **Create account** (free)
 3. **Add new cron job**:
    - Title: `Supabase Keep-Alive`
    - URL: `https://your-domain.vercel.app/api/keep-alive`
-   - Schedule: Every 5 minutes
+   - Schedule: Every 10 minutes
    - HTTP Method: GET
    - Enable: ✅
 
-**Cron Expression**: `*/5 * * * *`
+**Cron Expression**: `*/10 * * * *`
 
 ---
 
-### Option 3: EasyCron (Free Tier)
+### Option 2: EasyCron (Free Tier)
 
 1. **Go to**: https://www.easycron.com
 2. **Sign up** (free plan: 100 executions/day)
 3. **Create cron job**:
-   - Cron Expression: `*/5 * * * *`
+   - Cron Expression: `*/10 * * * *`
    - URL to call: `https://your-domain.vercel.app/api/keep-alive`
    - Cron Job Name: `Supabase Keep-Alive`
 
 ---
 
-### Option 4: UptimeRobot (Free Monitoring)
+### Option 3: UptimeRobot (Free Monitoring)
 
 1. **Go to**: https://uptimerobot.com
 2. **Add New Monitor**:
@@ -118,7 +97,7 @@ vercel --prod
 
 ---
 
-### Option 5: Pipedream (Advanced)
+### Option 4: Pipedream (Advanced)
 
 1. **Go to**: https://pipedream.com
 2. **Create new workflow**
