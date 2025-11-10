@@ -1,5 +1,4 @@
 import React from "react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { ProgressStats } from "../types";
 
 interface ProgressChartProps {
@@ -7,69 +6,6 @@ interface ProgressChartProps {
 }
 
 const ProgressChart: React.FC<ProgressChartProps> = ({ stats }) => {
-  const data = [
-    {
-      name: "Selesai",
-      value: stats.selesai,
-      color: "#2563eb",
-    },
-    {
-      name: "Dalam Proses",
-      value: stats.dalamProses,
-      color: "#0891b2",
-    },
-    {
-      name: "Belum Dimulai",
-      value: stats.belumDimulai,
-      color: "#0284c7",
-    },
-  ];
-
-  const COLORS = ["#2563eb", "#0891b2", "#0284c7"];
-
-  const renderCustomizedLabel = ({
-    cx,
-    cy,
-    midAngle,
-    innerRadius,
-    outerRadius,
-    percent,
-  }: any) => {
-    if (percent === 0) return null;
-
-    const RADIAN = Math.PI / 180;
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-    return (
-      <text
-        x={x}
-        y={y}
-        fill="white"
-        textAnchor={x > cx ? "start" : "end"}
-        dominantBaseline="central"
-        fontSize="12"
-        fontWeight="bold"
-      >
-        {`${(percent * 100).toFixed(0)}%`}
-      </text>
-    );
-  };
-
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white/90 backdrop-blur-md p-4 border border-blue-200 rounded-xl shadow-3d">
-          <p className="text-sm font-semibold text-gray-800">
-            {payload[0].name}
-          </p>
-          <p className="text-sm text-blue-600 font-medium">{`${payload[0].value} dokumen`}</p>
-        </div>
-      );
-    }
-    return null;
-  };
 
   if (stats.total === 0) {
     return (
