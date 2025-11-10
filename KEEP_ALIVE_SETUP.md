@@ -1,6 +1,7 @@
 # 🔄 Supabase Keep-Alive Setup Guide
 
 ## What This Does
+
 Keeps your Supabase database active by periodically pinging it, preventing cold starts and ensuring fast response times.
 
 ---
@@ -15,21 +16,25 @@ Keeps your Supabase database active by periodically pinging it, preventing cold 
 ## 🚀 Quick Setup (3 Steps)
 
 ### Step 1: Deploy to Vercel
+
 ```bash
 vercel --prod
 ```
 
 Your keep-alive endpoint will be at:
+
 ```
 https://your-domain.vercel.app/api/keep-alive
 ```
 
 ### Step 2: Test the Endpoint
+
 ```bash
 curl https://your-domain.vercel.app/api/keep-alive
 ```
 
 Expected response:
+
 ```json
 {
   "status": "awake",
@@ -52,16 +57,20 @@ Expected response:
 ### Option 1: Vercel Cron (Easiest)
 
 Add to `vercel.json`:
+
 ```json
 {
-  "crons": [{
-    "path": "/api/keep-alive",
-    "schedule": "*/5 * * * *"
-  }]
+  "crons": [
+    {
+      "path": "/api/keep-alive",
+      "schedule": "*/5 * * * *"
+    }
+  ]
 }
 ```
 
 Redeploy:
+
 ```bash
 vercel --prod
 ```
@@ -118,8 +127,8 @@ vercel --prod
    ```javascript
    await require("@pipedreamhq/platform").axios(this, {
      url: "https://your-domain.vercel.app/api/keep-alive",
-     method: "GET"
-   })
+     method: "GET",
+   });
    ```
 
 ---
@@ -129,13 +138,15 @@ vercel --prod
 ### Setup Slack Notifications
 
 **Using Zapier:**
+
 1. Trigger: Scheduled (every 5 minutes)
 2. Action: HTTP Request to your endpoint
 3. Filter: If status !== "awake"
 4. Send Slack message
 
 **Using Make.com (Integromat):**
-1. Schedule: Every 5 minutes  
+
+1. Schedule: Every 5 minutes
 2. HTTP Request: GET your endpoint
 3. Router: If status === "error"
 4. Slack: Post alert to channel
@@ -147,11 +158,12 @@ vercel --prod
 Since you can't run TypeScript serverless functions directly, test the service function:
 
 Create test file `test-keep-alive.ts`:
+
 ```typescript
-import { keepSupabaseAwake } from './src/services/SupabaseKeepAlive';
+import { keepSupabaseAwake } from "./src/services/SupabaseKeepAlive";
 
 async function test() {
-  console.log('Testing Supabase keep-alive...');
+  console.log("Testing Supabase keep-alive...");
   const result = await keepSupabaseAwake();
   console.log(JSON.stringify(result, null, 2));
 }
@@ -160,6 +172,7 @@ test();
 ```
 
 Run:
+
 ```bash
 npx ts-node test-keep-alive.ts
 ```
@@ -168,12 +181,12 @@ npx ts-node test-keep-alive.ts
 
 ## 📅 Recommended Schedule
 
-| Frequency | Cron Expression | Use Case |
-|-----------|----------------|----------|
-| Every 5 min | `*/5 * * * *` | High traffic apps |
-| Every 10 min | `*/10 * * * *` | Medium traffic (Recommended) |
-| Every 15 min | `*/15 * * * *` | Low traffic |
-| Every 30 min | `*/30 * * * *` | Minimal usage |
+| Frequency    | Cron Expression | Use Case                     |
+| ------------ | --------------- | ---------------------------- |
+| Every 5 min  | `*/5 * * * *`   | High traffic apps            |
+| Every 10 min | `*/10 * * * *`  | Medium traffic (Recommended) |
+| Every 15 min | `*/15 * * * *`  | Low traffic                  |
+| Every 30 min | `*/30 * * * *`  | Minimal usage                |
 
 **Recommended**: `*/10 * * * *` (every 10 minutes)
 
@@ -182,6 +195,7 @@ npx ts-node test-keep-alive.ts
 ## 🎯 Response Examples
 
 ### ✅ Success (All Tables OK)
+
 ```json
 {
   "status": "awake",
@@ -196,6 +210,7 @@ npx ts-node test-keep-alive.ts
 ```
 
 ### ⚠️ Partial (Some Tables Down)
+
 ```json
 {
   "status": "partial",
@@ -210,6 +225,7 @@ npx ts-node test-keep-alive.ts
 ```
 
 ### ❌ Error (All Down)
+
 ```json
 {
   "status": "error",
@@ -225,16 +241,19 @@ npx ts-node test-keep-alive.ts
 ## 🛠️ Troubleshooting
 
 ### Endpoint Returns 500 Error
+
 - Check Supabase URL and keys in Vercel environment variables
 - Verify tables exist: `timeline_schedules`, `document_links`
 - Check Supabase dashboard for connection issues
 
 ### Cron Job Not Running
+
 - Verify cron service is enabled
 - Check cron expression is correct
 - Look at execution logs in cron service dashboard
 
 ### Slow Response Times
+
 - Normal: 200-500ms
 - Acceptable: 500ms-2s
 - Slow: >2s - May indicate Supabase cold start
@@ -256,20 +275,20 @@ npx ts-node test-keep-alive.ts
 Add to your React app to ping on user activity:
 
 ```typescript
-import { useEffect } from 'react';
-import { keepSupabaseAwake } from './services/SupabaseKeepAlive';
+import { useEffect } from "react";
+import { keepSupabaseAwake } from "./services/SupabaseKeepAlive";
 
 function App() {
   useEffect(() => {
     // Ping once when app loads
     keepSupabaseAwake();
-    
+
     // Ping every 5 minutes while app is open
     const interval = setInterval(keepSupabaseAwake, 5 * 60 * 1000);
-    
+
     return () => clearInterval(interval);
   }, []);
-  
+
   return <YourApp />;
 }
 ```
@@ -281,6 +300,7 @@ function App() {
 Your Supabase database will now stay awake and responsive 24/7!
 
 **Quick Checklist:**
+
 - ✅ Deploy to Vercel
 - ✅ Test endpoint works
 - ✅ Setup cron job (choose one service)
@@ -288,6 +308,7 @@ Your Supabase database will now stay awake and responsive 24/7!
 - ✅ (Optional) Setup monitoring/alerts
 
 For detailed health monitoring, use:
+
 ```
 https://your-domain.vercel.app/api/health/supabase-ping
 ```
